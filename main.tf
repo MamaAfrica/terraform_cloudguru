@@ -27,7 +27,7 @@ resource "random_string" "uniquestring" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "813-6d290350-hands-on-with-terraform-on-azure"
+  name     = "813-7e634a3a-hands-on-with-terraform-on-azure"
   location = "East US"
 }
 module "storageacc" {

@@ -3,7 +3,6 @@ name: 'Terraform'
 on:
   push:
     branches: [ "main" ]
-    paths: '**.tf'
 
 permissions:
   contents: read
@@ -12,7 +11,9 @@ jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-    
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
@@ -32,10 +33,15 @@ jobs:
     - name: Terraform Init
       run: terraform init
 
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      run: terraform fmt -check
+
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform plan -input=false
 
-      # Build or change infrastructure according to Terraform configuration files
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       run: terraform apply -auto-approve -input=false

@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       "source" = "hashicorp/azurerm"
-      version  = "3.43.0"
+      version  = ">=3.43.0"
     }
   }
   cloud {
@@ -21,7 +21,7 @@ provider "azurerm" {
 }
 
 resource "random_string" "uniquestring" {
-  length           = 20
+  length           = 3
   special          = false
   upper            = false
 }
@@ -30,11 +30,12 @@ resource "azurerm_resource_group" "rg" {
   name     = "811-d134e023-provide-continuous-delivery-with-gith"
   location = "westus"
 }
-
-resource "azurerm_storage_account" "storageaccount" {
-  name                     = "stg${random_string.uniquestring.result}"
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
+module "storageacc" {
+  source  = "app.terraform.io/mamaafrica/storageacc/azurerm"
+  version = "1.0.0"
+  storage_account_name = "mimistorage${random_string.uniquestring}"
+  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_location = azurerm_resource_group.rg.location
+  Environment = "Production"
 }
+
